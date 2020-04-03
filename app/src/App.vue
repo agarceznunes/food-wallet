@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <toast />
-    <img alt="Vue logo" src="./assets/logo.png">
     <router-view></router-view>
   </div>
 </template>
@@ -37,5 +36,11 @@ export default {
       color: #42b983;
     }
   }
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 30px;
 }
 </style>

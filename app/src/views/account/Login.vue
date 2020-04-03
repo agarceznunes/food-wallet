@@ -1,5 +1,6 @@
 <template>
-    <div class="login">
+    <div class="login py-5">
+        <img class="logo" alt="Vue logo" src="@/assets/logo.png">
         <div class="container">
             <h1>Entrar</h1>
             <form @submit.prevent="login()">
@@ -11,7 +12,7 @@
                 </div>
                 <button type="submit" class="btn btn-block btn-primary">Entrar</button>
             </form>    
-            <span>Não tem cadastro? <router-link to="/sign-up">Cadastre-se</router-link></span>
+            <!-- <span>Não tem cadastro? <router-link to="/sign-up">Cadastre-se</router-link></span> -->
         </div>
     </div>
 </template>
@@ -30,8 +31,10 @@
         },
         methods: {
             login() {
-                firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(() => {
-                    router.push('home')
+                firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(data => {  
+                    firebase.firestore().collection('users').doc(data.user.uid).get().then(user => {
+                        user.data().admin ? router.push('home-admin') : router.push('home')     
+                    })
                 }, reject => {
                     this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
                 })
