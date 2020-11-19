@@ -12,6 +12,7 @@ import UserRegister from '../views/admin/UserRegister.vue'
 import Points from '../views/admin/Points.vue'
 import Coupons from '../views/admin/Coupons.vue'
 import Plans from '../views/admin/Plans.vue'
+import Simulator from '../views/admin/Simulator.vue'
 
 // import firebase from 'firebase'
 
@@ -80,6 +81,14 @@ const routes = [
     path: '/plans',
     name: 'Plans',
     component: Plans,
+    // meta: {
+    //   requiresAuth: true
+    // }
+  },
+  {
+    path: '/simulator',
+    name: 'Simulator',
+    component: Simulator,
     // meta: {
     //   requiresAuth: true
     // }

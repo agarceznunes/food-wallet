@@ -1,14 +1,14 @@
 <template>
-    <div class="login py-5">
+    <div class="login">
         <img class="logo" alt="Vue logo" src="@/assets/logo.png">
         <div class="container">
-            <h1>Entrar</h1>
+            <h1 class="pb-5">A sua carteira de pontos!</h1>
             <form @submit.prevent="login()">
                 <div class="form-group">
-                    <input class="w-100" type="text" v-model="email" placeholder="E-mail" autocomplete="off">
+                    <input class="form-control w-100" type="text" v-model="email" placeholder="E-mail" autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <input class="w-100" type="password" v-model="password" placeholder="Password" autocomplete="off">
+                    <input class="form-control w-100" type="password" v-model="password" placeholder="Senha" autocomplete="off">
                 </div>
                 <button type="submit" class="btn btn-block btn-primary">Entrar</button>
             </form>    

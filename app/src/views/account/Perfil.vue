@@ -1,34 +1,33 @@
 <template>
     <div class="perfil">
         <div class="container">
-            <h1>Dados Cadastrais</h1>
+            <h1 class="pb-5">Dados Cadastrais</h1>
             <form @submit.prevent="updatePerfil()">
                 <div class="form-group">
-                    <input class="w-100" type="text" v-model="name" placeholder="Nome" autocomplete="off">
+                    <input class="form-control w-100" type="text" v-model="name" placeholder="Nome completo" autocomplete="off">
                 </div>
-                <div class="form-group float-left">
-                    <input type="radio" class="mr-2" v-model="gender" value="1" checked>Masculino
-                    <input type="radio" class="mr-2" v-model="gender" value="2">Feminino
-                    <input type="radio" class="mr-2" v-model="gender" value="0">Não informar
+                <div class="form-group text-left">
+                    <label class="float-left font-weight-bold mr-3" for="gender">Sexo:</label>
+                    <input type="radio" class="mr-2" v-model="gender" name="gender" value="1" checked>Masculino
+                    <input type="radio" class="mr-2" v-model="gender" name="gender" value="2">Feminino
+                    <input type="radio" class="mr-2" v-model="gender" name="gender" value="0">Não informar
                 </div>
                 <div class="form-group">
-                    <input class="w-100" type="date" v-model="birthDate" placeholder="Data de Nascimento" autocomplete="off">
+                    <label class="float-left font-weight-bold" for="birthDate">Data de Nascimento:</label>
+                    <input class="form-control w-100" type="date" name="birthDate" v-model="birthDate" placeholder="Data de Nascimento" autocomplete="off">
                 </div>
                 <div class="form-group float-left">
-                    <button type="button" class="btn btn-primary" v-on:click="passwordFields = !passwordFields">Mudar Senha</button>
+                    <button type="button" class="btn btn-secondary" v-on:click="passwordFields = !passwordFields">Mudar Senha<font-awesome-icon class="ml-2" icon="chevron-down" /></button>
                 </div>
                 <div v-if="passwordFields" class="form-group">
-                    <input class="w-100" type="password" v-model="currentPassword" placeholder="Senha Atual" autocomplete="off">
+                    <input class="form-control w-100" type="password" v-model="password" placeholder="Nova Senha" autocomplete="off">
                 </div>
                 <div v-if="passwordFields" class="form-group">
-                    <input class="w-100" type="password" v-model="password" placeholder="Nova Senha" autocomplete="off">
+                    <input class="form-control w-100" type="password" v-model="confirmationPassword" placeholder="Confirmar Senha" autocomplete="off">
                 </div>
-                <div v-if="passwordFields" class="form-group">
-                    <input class="w-100" type="password" v-model="confirmationPassword" placeholder="Confirmar Senha" autocomplete="off">
-                </div>
-                <button type="submit" class="btn btn-block btn-primary">Salvar</button>
+                <button type="submit" class="btn btn-block btn-primary mb-3">Salvar</button>
             </form>    
-            <router-link to="/home">Voltar</router-link>
+            <router-link to="/home"><button class="btn btn-block btn-tertiary mb-3">Voltar</button></router-link>
         </div>
     </div>
 </template>
@@ -44,40 +43,39 @@
                 name: undefined,
                 gender: undefined,
                 birthDate: undefined,
-                currentPassword: undefined,
                 password: undefined,
                 confirmationPassword: undefined,
                 passwordFields: false
             }
         },
         methods: {
-            // login() {
-            //     firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(() => {
-            //         router.push('home')
-            //     }, reject => {
-            //         this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
-            //     })
-            // }
             updatePerfil() {
                 if (this.password !== undefined) {
-                    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
-                        name: this.name,
-                        gender: this.gender,
-                        birthDate: this.birthDate,
-                        password: this.password
-                    })
-                    .then(() => {
-                        this.$root.$emit('changeToast', { message: 'Atualização realizada com sucesso.', type: 'success' })
-                        router.push('home')
-                    }, reject => {
-                        this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
-                    })
+                    if (this.password === this.confirmationPassword) {
+                        firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+                            name: this.name,
+                            gender: this.gender,
+                            birthDate: this.birthDate
+                        }, { merge: true })
+                        .then(() => {
+                            firebase.auth().currentUser.updatePassword(this.password).then(() => {
+                                this.$root.$emit('changeToast', { message: 'Atualização realizada com sucesso.', type: 'success' })
+                                router.push('home')
+                            }, reject => {
+                                this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
+                            })
+                        }, reject => {
+                            this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
+                        })
+                    } else {
+                        this.$root.$emit('changeToast', { message: 'Confirmação de senha incorreta.', type: 'error' })
+                    }
                 } else {
                     firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
                         name: this.name,
                         gender: this.gender,
                         birthDate: this.birthDate,
-                    })
+                    }, {merge: true})
                     .then(() => {
                         this.$root.$emit('changeToast', { message: 'Atualização realizada com sucesso.', type: 'success' })
                         router.push('home')
