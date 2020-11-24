@@ -6,13 +6,13 @@
             <h1 class="pb-5">Pontos</h1>
             <form @submit.prevent="score()">
                 <div class="form-group">
-                    <input class="form-control w-100" type="text" v-model="cpf" placeholder="CPF" autocomplete="off" required>
+                    <input class="form-control w-100" type="text" v-model="cpf" placeholder="CPF" v-mask="'###.###.###-##'" autocomplete="off" required>
                 </div>
                 <button type="submit" class="btn btn-block btn-primary">Pontuar</button>
             </form>
             <form @submit.prevent="validate()" class="mt-5">
                 <div class="form-group">
-                    <input class="form-control w-100" type="text" v-model="cpf2" placeholder="CPF" autocomplete="off" required>
+                    <input class="form-control w-100" type="text" v-model="cpf2" placeholder="CPF" v-mask="'###.###.###-##'" autocomplete="off" required>
                 </div>
                 <div class="form-group">
                     <input class="form-control w-100" type="text" v-model="code" placeholder="Código" autocomplete="off" required>
@@ -52,7 +52,7 @@
                 })
             },
             score() {
-                firebase.firestore().collection('users').where('cpf', '==', this.cpf).get().then(data => {
+                firebase.firestore().collection('users').where('cpf', '==', this.cpf.replace(/\W+/gi, '')).get().then(data => {
                     if (!data.empty) {
                         firebase.firestore().collection('pontuation').get().then(data2 => {
                             let alreadyHas = false
@@ -84,7 +84,7 @@
                 })
             },
             validate() {
-                firebase.firestore().collection('userCoupons').where('userCpf', '==', this.cpf2).where('code', '==', parseInt(this.code)).get().then(data2 => {
+                firebase.firestore().collection('userCoupons').where('userCpf', '==', this.cpf2.replace(/\W+/gi, '')).where('code', '==', parseInt(this.code)).get().then(data2 => {
                     if (!data2.empty) {
                         firebase.firestore().collection('userCoupons').doc(data2.docs[0].id).delete().then(() => {
                             this.$root.$emit('changeToast', { message: 'Cupom validado com sucesso.', type: 'success' })

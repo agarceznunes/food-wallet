@@ -6,22 +6,22 @@
             <h1 class="pb-5">Simulador</h1>
             <form @submit.prevent="calcLucro()">
                 <div class="form-group">
-                    <label class="float-left" for="precoCobrado">Preço Cobrado (R$):</label>
+                    <label class="float-left font-weight-bold" for="precoCobrado">Preço Cobrado (R$):</label>
                     <input class="form-control w-100" type="number" id="precoCobrado" v-model="precoCobrado" autocomplete="off" required>
                 </div>
                 <div class="form-group">
-                    <label class="float-left" for="custoReal">Custo Real (R$):</label>
+                    <label class="float-left font-weight-bold" for="custoReal">Custo Real (R$):</label>
                     <input class="form-control w-100" type="number" id="custoReal" v-model="custoReal" autocomplete="off" required>
                 </div>
                 <button type="submit" class="btn btn-block btn-primary mb-3">Calcular Lucro</button>
             </form>
             <form @submit.prevent="calcReducao()">
                 <div class="form-group">
-                    <label class="float-left" for="lucroAtual">Lucro Atual (R$):</label>
+                    <label class="float-left font-weight-bold" for="lucroAtual">Lucro Atual (R$):</label>
                     <input class="form-control w-100" type="number" id="lucroAtual" v-model="lucroAtual" autocomplete="off" readonly>
                 </div>
                 <div class="form-group">
-                    <label class="float-left" for="lucroAceitavel">Lucro Aceitável pela Venda:</label>
+                    <label class="float-left font-weight-bold" for="lucroAceitavel">Lucro Aceitável pela Venda:</label>
                     <input class="form-control w-100" type="range" min="0" :max="this.lucroAtual" v-model="lucroAceitavel" autocomplete="off" :disabled="!showResultLucro">
                     <div class="text-center"><b>R${{lucroAceitavel}}</b></div>
                 </div>

@@ -6,10 +6,10 @@
             <h1 class="pb-5">Cadastro de Usuários</h1>
             <form @submit.prevent="register()">
                 <div class="form-group">
-                    <input class="form-control w-100" type="text" v-model="email" placeholder="E-mail" autocomplete="off" required>
+                    <input class="form-control w-100" type="email" v-model="email" placeholder="E-mail" autocomplete="off" required>
                 </div>
                 <div class="form-group">
-                    <input class="form-control w-100" type="text" v-model="cpf" placeholder="CPF" autocomplete="off" required>
+                    <input class="form-control w-100" type="text" v-model="cpf" placeholder="CPF" v-mask="'###.###.###-##'" autocomplete="off" required>
                 </div>
                 <button type="submit" class="btn btn-block btn-primary mb-3">Salvar</button>
             </form>    
@@ -39,13 +39,21 @@
         },
         methods: {
             register() {
-                firebase.auth().createUserWithEmailAndPassword(this.email, this.cpf).then(data => {
-                    this.data = data
-                    firebase.firestore().collection('users').doc(data.user.uid).set({admin: false, cpf: this.cpf}).then(() => {
-                        this.setPontuation()
-                    }, reject => {
-                        this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
-                    })
+                firebase.firestore().collection('users').where('cpf', '==', this.cpf.replace(/\W+/gi, '')).get().then(data => {
+                    if (data.empty) {
+                        firebase.auth().createUserWithEmailAndPassword(this.email, this.cpf.replace(/\W+/gi, '')).then(data => {
+                            this.data = data
+                            firebase.firestore().collection('users').doc(data.user.uid).set({admin: false, cpf: this.cpf.replace(/\W+/gi, '')}).then(() => {
+                                this.setPontuation()
+                            }, reject => {
+                                this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
+                            })
+                        }, reject => {
+                            this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
+                        })
+                    } else {
+                        this.$root.$emit('changeToast', { message: 'Já existe um usuário com este CPF cadastrado.', type: 'error' })
+                    }
                 }, reject => {
                     this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
                 })

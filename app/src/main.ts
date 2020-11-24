@@ -11,12 +11,15 @@ import { BootstrapVue } from 'bootstrap-vue'
 
 // Fontawesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCookie, faUtensils, faBeer, faMoneyCheckAlt, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { faCookie, faUtensils, faBeer, faMoneyCheckAlt, faChevronDown, faChevronUp, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+import VueTheMask from 'vue-the-mask'
 
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
+Vue.use(VueTheMask)
 
 library.add(
   faCookie,
@@ -24,7 +27,8 @@ library.add(
   faBeer,
   faMoneyCheckAlt,
   faChevronDown,
-  faChevronUp
+  faChevronUp,
+  faTimesCircle
 )
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)

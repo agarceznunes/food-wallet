@@ -108,7 +108,7 @@ export default {
       }
     },
     getListRestaurant () {
-      firebase.firestore().collection('restaurants').get().then(data => {
+      firebase.firestore().collection('restaurants').orderBy('name').get().then(data => {
         this.restaurantList = data.docs
       })
     },

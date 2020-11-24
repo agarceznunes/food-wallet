@@ -3,7 +3,31 @@
         <div class="container">
             <h1>Administrador</h1>
             <h3 class="pb-5 subtitle">Burger Bar</h3>
-            <h1 class="pb-5">Cupons</h1>
+            <h1 class="pb-5">Meus Cupons</h1>
+            <div>
+                <table class="table table-bordered table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Valor</th>
+                            <th>Tipo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="data.length > 0">
+                        <tr v-for="item in data" :key="item.id">
+                            <td>{{item.data().name}}</td>
+                            <td>{{item.data().points}}</td>
+                            <td>{{getItemTypeName(item.data().itemType)}}</td>
+                            <td class="cursor-pointer" v-b-modal.my-modal @click="sendDataToModal(item.id)"><font-awesome-icon class="text-danger" icon="times-circle"/></td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else class="text-center">
+                        <td colspan="100%">O restaurante ainda não possui cupons cadastrados.</td>
+                    </tbody>
+                </table>
+            </div>
+            <h1 class="py-5">Adicionar Cupom</h1>
             <form @submit.prevent="save()">
                 <div class="form-group">
                     <input class="form-control w-100" type="text" v-model="nmPrato" placeholder="Nome do Prato" autocomplete="off" required>
@@ -23,25 +47,60 @@
                 <button type="submit" class="btn btn-block btn-primary mb-3">Salvar</button>
             </form>
             <router-link to="/home-admin"><button class="btn btn-block btn-tertiary mb-3">Voltar</button></router-link>
+            <b-modal id="my-modal" hide-footer>
+                Tem certeza que deseja remover o cupom selecionado?
+                <div class="row mt-3 mx-auto">
+                    <b-button class="btn btn-primary mr-3" @click="removeCoupon(selectedCoupon)">Sim</b-button>
+                    <b-button class="btn btn-primary" @click="$bvModal.hide('my-modal')">Não</b-button>
+                </div>
+            </b-modal>
         </div>
     </div>
 </template>
 
 <script>
     import firebase from 'firebase'
-    import router from '@/router'
 
     export default {
         name: 'Coupons',
         data() {
             return {
+                data: [],
                 nmPrato: undefined,
                 valorPrato: undefined,
                 // imagem: undefined,
-                itemType: 1
+                itemType: 1,
+                selectedCoupon: '' 
             }
         },
+        created (){
+            this.getData()
+        },
         methods: {
+            getData() {
+                this.data = []
+                firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get().then(data => {
+                    firebase.firestore().collection('coupons').get().then(querySnapshot => {
+                        if (querySnapshot.size > 0) {
+                            querySnapshot.docs.forEach(element => {
+                                if (element.data().restaurant.path === 'restaurants/' + data.data().restaurant.id) this.data.push(element)
+                            })
+                        }
+                    })
+                })
+                .catch(function(error) {
+                    console.log("Error getting documents: ", error);
+                })
+            },
+            getItemTypeName(itemType) {
+                if (itemType == 1) {
+                    return 'Prato P.'
+                } else if (itemType == 2) {
+                    return 'Aperitivo'
+                } else if (itemType == 0){
+                    return 'Bebida'
+                }
+            },
             save() {
                 firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get().then(data => {
                     firebase.firestore().collection('coupons').doc().set({
@@ -53,10 +112,25 @@
                     })
                     .then(() => {
                         this.$root.$emit('changeToast', { message: 'O cupom foi cadastrado em seu restaurante.', type: 'success' })
-                        router.push('home-admin')
+                        this.nmPrato = ''
+                        this.valorPrato = ''
+                        this.itemType = 1
+                        this.getData()
                     }, reject => {
                         this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
                     })                    
+                }, reject => {
+                    this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
+                })
+            },
+            sendDataToModal(item) {
+                this.selectedCoupon = item
+            },
+            removeCoupon(id) {
+                firebase.firestore().collection('coupons').doc(id).delete().then(() => {
+                    this.$bvModal.hide('my-modal')
+                    this.getData()
+                    this.$root.$emit('changeToast', { message: 'O cupom foi removido do seu restaurante.', type: 'success' })
                 }, reject => {
                     this.$root.$emit('changeToast', { message: reject.message, type: 'error' })
                 })
@@ -66,5 +140,13 @@
 </script>
 
 <style lang="less" scoped>
-
+.table {
+    background-color: #fff;
+}
+.table thead {
+    background-color: gold;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
 </style>

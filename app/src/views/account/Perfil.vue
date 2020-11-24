@@ -4,7 +4,8 @@
             <h1 class="pb-5">Dados Cadastrais</h1>
             <form @submit.prevent="updatePerfil()">
                 <div class="form-group">
-                    <input class="form-control w-100" type="text" v-model="name" placeholder="Nome completo" autocomplete="off">
+                    <label class="float-left font-weight-bold" for="name">Nome Completo:</label>
+                    <input class="form-control w-100" type="text" id="name" v-model="name" placeholder="Nome completo" autocomplete="off" required>
                 </div>
                 <div class="form-group text-left">
                     <label class="float-left font-weight-bold mr-3" for="gender">Sexo:</label>
@@ -14,7 +15,7 @@
                 </div>
                 <div class="form-group">
                     <label class="float-left font-weight-bold" for="birthDate">Data de Nascimento:</label>
-                    <input class="form-control w-100" type="date" name="birthDate" v-model="birthDate" placeholder="Data de Nascimento" autocomplete="off">
+                    <input class="form-control w-100" type="date" name="birthDate" v-model="birthDate" placeholder="Data de Nascimento" autocomplete="off" required>
                 </div>
                 <div class="form-group float-left">
                     <button type="button" class="btn btn-secondary" v-on:click="passwordFields = !passwordFields">Mudar Senha<font-awesome-icon class="ml-2" icon="chevron-down" /></button>
@@ -40,13 +41,21 @@
         name: 'Perfil',
         data() {
             return {
+                data: [],
                 name: undefined,
-                gender: undefined,
+                gender: 1,
                 birthDate: undefined,
                 password: undefined,
                 confirmationPassword: undefined,
                 passwordFields: false
             }
+        },
+        created() {
+            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get().then(data => {
+                this.name = data.data().name
+                this.gender = data.data().gender
+                this.birthDate = data.data().birthDate
+            })
         },
         methods: {
             updatePerfil() {
