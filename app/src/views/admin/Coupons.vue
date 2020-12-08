@@ -2,7 +2,7 @@
     <div class="perfil">
         <div class="container">
             <h1>Administrador</h1>
-            <h3 class="pb-5 subtitle">Burger Bar</h3>
+            <h3 class="pb-5 subtitle">{{userName}}</h3>
             <h1 class="pb-5">Meus Cupons</h1>
             <div>
                 <table class="table table-bordered table-hover table-sm">
@@ -70,7 +70,8 @@
                 valorPrato: undefined,
                 // imagem: undefined,
                 itemType: 1,
-                selectedCoupon: '' 
+                selectedCoupon: '' ,
+                userName: this.$route.params.userName
             }
         },
         created (){

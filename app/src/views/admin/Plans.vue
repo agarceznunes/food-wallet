@@ -2,7 +2,7 @@
     <div class="perfil">
         <div class="container">
             <h1>Administrador</h1>
-            <h3 class="pb-5 subtitle">Burger Bar</h3>
+            <h3 class="pb-5 subtitle">{{userName}}</h3>
             <h1 class="pb-5">Plano</h1>
             <form @submit.prevent="save()">
                 <div class="form-group">
@@ -44,7 +44,8 @@
                 txPrimeiroCliente: undefined,
                 txFimSemana: undefined,
                 // txDiurno: undefined,
-                txNoturno: undefined
+                txNoturno: undefined,
+                userName: this.$route.params.userName
             }
         },
         created () {

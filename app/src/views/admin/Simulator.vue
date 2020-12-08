@@ -2,7 +2,7 @@
     <div class="simulador">
         <div class="container">
             <h1>Administrador</h1>
-            <h3 class="pb-5 subtitle">Burger Bar</h3>
+            <h3 class="pb-5 subtitle">{{userName}}</h3>
             <h1 class="pb-5">Simulador</h1>
             <form @submit.prevent="calcLucro()">
                 <div class="form-group">
@@ -47,7 +47,8 @@
                 lucroAceitavel: 0,
                 reducao: undefined,
                 showResultLucro: false,
-                showResultReducao: false
+                showResultReducao: false,
+                userName: this.$route.params.userName
             }
         },
         methods: {

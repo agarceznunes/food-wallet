@@ -56,9 +56,23 @@ const firebaseConfig = {
   appId: "1:679562323939:web:d9e944e954a317d826a2d6",
   measurementId: "G-K7Q1LMQ2P3"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
+
+firebase.firestore().enablePersistence()
+  .catch(function(err) {
+      if (err.code == 'failed-precondition') {
+          // Multiple tabs open, persistence can only be enabled
+          // in one tab at a a time.
+          // ...
+      } else if (err.code == 'unimplemented') {
+          // The current browser does not support all of the
+          // features required to enable persistence
+          // ...
+      }
+  });
 
 // firebase.auth().onAuthStateChanged(() => {
 //   if (!app) {
